@@ -4,8 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let books = [];
 
-    form.addEventListener('submit', handleFormSubmit);
-
     const handleFormSubmit = (event) => {
         event.preventDefault();
 
@@ -18,6 +16,8 @@ document.addEventListener('DOMContentLoaded', () => {
         form.reset();
     };
 
+    form.addEventListener('submit', handleFormSubmit);
+
     const getFormData = () => ({
         title: document.getElementById('title').value.trim(),
         author: document.getElementById('author').value.trim(),
@@ -27,14 +27,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const validateFormData = ({ title, author, isbn, pubDate, genre }) => {
+        // Check if any fields are empty
         if (!title || !author || !isbn || !pubDate || !genre) {
             alert('All fields must be filled!');
             return false;
         }
-        if (isNaN(isbn)) {
-            alert('ISBN must be a number!');
+
+        // Check if ISBN contains only numbers
+        const isbnPattern = /^\d+$/;
+        if (!isbnPattern.test(isbn)) {
+            alert('ISBN must be a valid number!');
             return false;
         }
+
         return true;
     };
 
