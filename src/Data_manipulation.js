@@ -53,8 +53,18 @@ document.getElementById('addBookForm').addEventListener('submit', (event) => {
         addBook(title, author, isbn, pubDate, genre);
     }
 });
+
+
 const calculateBookAge = (pubDate) => {
     const currentYear = new Date().getFullYear();
     const bookYear = new Date(pubDate).getFullYear();
     return currentYear - bookYear;
 };
+
+
+const filterBooksByGenre = (genre) => {
+    return books.filter(book => book.genre.toLowerCase() === genre.toLowerCase());
+};
+
+const fictionBooks = filterBooksByGenre('Fiction');
+console.log(fictionBooks);
