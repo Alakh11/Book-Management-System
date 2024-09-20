@@ -5,6 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book Management System</title>
 </head>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.querySelector('form');
+        
+        form.addEventListener('submit', (event) => {
+            const title = document.getElementById('title').value.trim();
+            const author = document.getElementById('author').value.trim();
+            const isbn = document.getElementById('isbn').value.trim();
+            const pubDate = document.getElementById('pub_date').value.trim();
+            const genre = document.getElementById('genre').value.trim();
+            
+            if (!title || !author || !isbn || !pubDate || !genre) {
+                alert('All fields must be filled!');
+                event.preventDefault();
+            } else if (isNaN(isbn)) {
+                alert('ISBN must be a number!');
+                event.preventDefault();
+            }
+        });
+    });
+</script>
+
 <body>
     <h1>Add New Book</h1>
     <form action="/add-book" method="POST">
