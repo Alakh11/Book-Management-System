@@ -1,9 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('addBookForm');
     const bookList = document.getElementById('book-list');
+    const genreFilter = document.getElementById('genreFilter'); // New element
 
     console.log('Form Element:', form);
     console.log('Book List Element:', bookList);
+    console.log('Genre Filter Element:', genreFilter);
 
     if (!form) {
         console.error("Form with id 'addBookForm' not found!");
@@ -15,9 +17,15 @@ document.addEventListener('DOMContentLoaded', () => {
         return; // Exit if book list is not found
     }
 
+    if (!genreFilter) {
+        console.error("Element with id 'genreFilter' not found!");
+        return; // Exit if genre filter is not found
+    }
+
     let books = JSON.parse(localStorage.getItem('books')) || []; // Retrieve books from localStorage
 
     form.addEventListener('submit', handleFormSubmit);
+    genreFilter.addEventListener('change', handleGenreFilter);
 
     function handleFormSubmit(event) {
         event.preventDefault();
@@ -28,7 +36,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         addBook(bookData);
         renderBooks();
+        populateGenreFilter();
         form.reset();
+    }
+
+    function handleGenreFilter() {
+        renderBooks();
     }
 
     function getFormData() {
@@ -55,6 +68,10 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('A book with this ISBN already exists!');
             return false;
         }
+        if (!isValidDate(pubDate)) {
+            alert('Please enter a valid publication date in YYYY-MM-DD format.');
+            return false;
+        }
         return true;
     }
 
@@ -73,13 +90,72 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderBooks() {
         bookList.innerHTML = ''; // Clear the list
-        books.forEach(book => bookList.appendChild(createBookItem(book)));
+
+        // Get selected genre from filter
+        const selectedGenre = genreFilter.value;
+
+        // Group books by genre
+        const genres = {};
+
+        books.forEach(book => {
+            if (selectedGenre !== 'All' && book.genre !== selectedGenre) {
+                return; // Skip books that don't match the selected genre
+            }
+
+            if (!genres[book.genre]) {
+                genres[book.genre] = [];
+            }
+            genres[book.genre].push(book);
+        });
+
+        // Iterate over each genre and create sections
+        for (const genre in genres) {
+            if (genres.hasOwnProperty(genre)) {
+                // Create a genre header
+                const genreHeader = document.createElement('h2');
+                genreHeader.textContent = genre;
+                bookList.appendChild(genreHeader);
+
+                // Create a sub-list for books in this genre
+                const genreList = document.createElement('ul');
+                genreList.style.listStyleType = 'none'; // Remove default bullets
+                genreList.style.paddingLeft = '20px'; // Indent sub-list
+
+                genres[genre].forEach(book => {
+                    genreList.appendChild(createBookItem(book));
+                });
+
+                bookList.appendChild(genreList);
+            }
+        }
+
+        // If no books match the filter, display a message
+        if (Object.keys(genres).length === 0) {
+            const noBooksMessage = document.createElement('p');
+            noBooksMessage.textContent = 'No books found for the selected genre.';
+            bookList.appendChild(noBooksMessage);
+        }
     }
 
     function createBookItem(book) {
         const bookItem = document.createElement('li');
+
+        // Calculate the age of the book
+        const publicationDate = new Date(book.pubDate);
+        const currentDate = new Date();
+        let age = currentDate.getFullYear() - publicationDate.getFullYear();
+        const monthDifference = currentDate.getMonth() - publicationDate.getMonth();
+
+        // Adjust age if the current month is before the publication month
+        if (monthDifference < 0 || (monthDifference === 0 && currentDate.getDate() < publicationDate.getDate())) {
+            age--;
+        }
+
+        // Handle cases where age might be negative or zero
+        age = age >= 0 ? age : 0;
+
         bookItem.innerHTML = `
-            <strong>${book.title}</strong> by ${book.author} - ${book.genre} (${book.pubDate}) | ISBN: ${book.isbn}
+            <strong>${book.title}</strong> by ${book.author} - ${book.genre} (${book.pubDate}) | ISBN: ${book.isbn} | Age: ${age} year(s)
         `;
         
         const editButton = createButton('Edit', () => editBook(book.id));
@@ -105,16 +181,22 @@ document.addEventListener('DOMContentLoaded', () => {
             const updatedTitle = prompt('Enter new title:', bookToEdit.title);
             const updatedAuthor = prompt('Enter new author:', bookToEdit.author);
             const updatedISBN = prompt('Enter new ISBN:', bookToEdit.isbn);
-            const updatedPubDate = prompt('Enter new publication date:', bookToEdit.pubDate);
+            const updatedPubDate = prompt('Enter new publication date (YYYY-MM-DD):', bookToEdit.pubDate);
             const updatedGenre = prompt('Enter new genre:', bookToEdit.genre);
 
             if (
                 updatedTitle && updatedTitle.trim() &&
                 updatedAuthor && updatedAuthor.trim() &&
                 updatedISBN && !isNaN(updatedISBN) &&
-                updatedPubDate && updatedPubDate.trim() &&
+                updatedPubDate && isValidDate(updatedPubDate) &&
                 updatedGenre && updatedGenre.trim()
             ) {
+                // Check for unique ISBN if changed
+                if (updatedISBN !== bookToEdit.isbn && books.some(book => book.isbn === updatedISBN)) {
+                    alert('A book with this ISBN already exists!');
+                    return;
+                }
+
                 bookToEdit.title = updatedTitle.trim();
                 bookToEdit.author = updatedAuthor.trim();
                 bookToEdit.isbn = updatedISBN.trim();
@@ -123,6 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 localStorage.setItem('books', JSON.stringify(books)); // Update localStorage
                 renderBooks();
+                populateGenreFilter();
             } else {
                 alert('Please provide valid inputs for all fields.');
             }
@@ -134,8 +217,37 @@ document.addEventListener('DOMContentLoaded', () => {
             books = books.filter(book => book.id !== id);
             localStorage.setItem('books', JSON.stringify(books)); // Update localStorage
             renderBooks();
+            populateGenreFilter();
         }
     }
 
+    function populateGenreFilter() {
+        // Get unique genres
+        const uniqueGenres = [...new Set(books.map(book => book.genre))];
+
+        // Clear existing options except 'All'
+        genreFilter.innerHTML = '<option value="All">All</option>';
+
+        // Populate dropdown with unique genres
+        uniqueGenres.forEach(genre => {
+            const option = document.createElement('option');
+            option.value = genre;
+            option.textContent = genre;
+            genreFilter.appendChild(option);
+        });
+    }
+
+    function isValidDate(dateString) {
+        // Check if dateString is in YYYY-MM-DD format and is a valid date
+        const regex = /^\d{4}-\d{2}-\d{2}$/;
+        if (!regex.test(dateString)) return false;
+        const date = new Date(dateString);
+        const timestamp = date.getTime();
+        if (typeof timestamp !== 'number' || Number.isNaN(timestamp)) return false;
+        return date.toISOString().startsWith(dateString);
+    }
+
+    // Initial population of genre filter and rendering
+    populateGenreFilter();
     renderBooks(); // Initial render on page load
 });
