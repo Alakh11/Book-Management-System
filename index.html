@@ -8,7 +8,7 @@
 
 <body>
     <h1>Add New Book</h1>
-    <form action="/add-book" method="POST">
+    <form id="addBookForm" method="POST">
         <label for="title">Title:</label><br>
         <input type="text" id="title" name="title" required><br><br>
         
@@ -30,6 +30,6 @@
     <ul id="book-list">
         <!-- Books will be dynamically added here -->
     </ul>
-    <script src="app.js" defer></script>
+    <script src="/src/app.js" defer></script>
 </body>
 </html>
