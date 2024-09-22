@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('Book List Element:', bookList);
     console.log('Genre Filter Element:', genreFilter);
 
-    if (!form) {
+    if (!form) 
         console.error("Form with id 'addBookForm' not found!");
         return; // Exit if form is not found
     }
