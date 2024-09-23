@@ -1,32 +1,33 @@
 <h1>Book Management System (BMS) Project Plan</h1>
 <h2>1. Project Overview</h2>
 <h3>1.1. Project Title</h3>
-<h3>Book Management System (BMS)</h3>
+<h3>Book Management System (BMS)</h3><br>
 <h3>1.2. Project Description</h3>
-<p>The Book Management System (BMS) is a full-stack web application aimed at helping users manage personal book collections. The system will allow users to add, edit, and delete books, categorize books by genre, and calculate the age of each book based on its publication date. The project will progress from basic HTML and JavaScript functionality to incorporating advanced features like asynchronous operations, responsive design, and TypeScript conversion, following the agile development process.</p>
+<p>The Book Management System (BMS) is a full-stack web application aimed at helping users manage personal book collections. The system will allow users to add, edit, and delete books, categorize books by genre, and calculate the age of each book based on its publication date. The project will progress from basic HTML and JavaScript functionality to incorporating advanced features like asynchronous operations, responsive design, and TypeScript conversion, following the agile development process.</p><br>
 <h3>1.3. Project Objectives</h3>
 <ul><h4>	Functional Objectives:</h4>
 <li>	Build an interactive web-based system for managing books.</li>
 <li>	Implement features for book addition, editing, deletion, and categorization by genre.</li>
 <li>	Calculate the age of each book using JavaScript.</li>
 <li>	Persist data using browser localStorage.</li>
-<li>	Integrate responsive design principles using Tailwind CSS or Material CSS.</li>,</ul>
-•	Non-Functional Objectives:
-o	Ensure cross-browser compatibility and responsiveness.
-o	Maintain clean, scalable code with emphasis on SOLID principles.
-o	Implement GitHub workflow with branches and pull requests for collaboration.
+<li>	Integrate responsive design principles using Tailwind CSS or Material CSS.</li></ul>
+<ul><h4>	Non-Functional Objectives:</h4>
+<li>	Ensure cross-browser compatibility and responsiveness.
+<li>	Maintain clean, scalable code with emphasis on SOLID principles.
+<li>	Implement GitHub workflow with branches and pull requests for collaboration.</li></ul>
+<br><br>
 <h2>2. Project Scope</h2>
 <h3>2.1. In-Scope</h3>
-<h3>•	Core Features:</h4>
-o	Book addition, editing, and deletion.
-o	Book categorization by genre.
-o	Calculation of book age based on the publication date.
-o	Asynchronous data fetching for book information.
-o	Responsive design using modern CSS libraries.
-o	Data persistence using localStorage.
-<h4>•	User Interface:</h4>
-o	Develop a clean, user-friendly interface for book management.
-o	Implement form validation and error handling for incorrect inputs.
+<ul><h4>•	Core Features:</h4>
+<li>	Book addition, editing, and deletion.</li>
+<li>	Book categorization by genre.</li>
+<li>	Calculation of book age based on the publication date.</li>
+<li>	Asynchronous data fetching for book information.</li>
+<li>	Responsive design using modern CSS libraries.</li>
+<li>	Data persistence using localStorage.</li></ul>
+<ul><h4>•	User Interface:</h4>
+<li>	Develop a clean, user-friendly interface for book management.</li>
+<li>	Implement form validation and error handling for incorrect inputs.</li></ul><br>
 <h3>2.2. Out-of-Scope</h3>
 •	Backend Services: No backend server or database is included.
 •	Advanced Features: Search, sorting, exporting/importing data, and authentication will not be part of the initial scope.
@@ -125,4 +126,3 @@ The project primarily relies on free tools and resources such as:
 <h3>13.2. Final Deliverables</h3>
 •	Functional Application: Fully functioning Book Management System.
 •	Documentation: Complete documentation of features, code, and testing strategies.
-
