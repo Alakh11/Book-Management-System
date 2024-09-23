@@ -4,13 +4,13 @@
 <h3>Book Management System (BMS)</h3>
 <h3>1.2. Project Description</h3>
 <p>The Book Management System (BMS) is a full-stack web application aimed at helping users manage personal book collections. The system will allow users to add, edit, and delete books, categorize books by genre, and calculate the age of each book based on its publication date. The project will progress from basic HTML and JavaScript functionality to incorporating advanced features like asynchronous operations, responsive design, and TypeScript conversion, following the agile development process.</p>
-<h3>1.3. Project Objectives<</h3>>
-<ol>•	Functional Objectives:
+<h3>1.3. Project Objectives</h3>
+<ul><h4>	Functional Objectives:</h4>
 <li>	Build an interactive web-based system for managing books.</li>
-<li>o	Implement features for book addition, editing, deletion, and categorization by genre.</li>
-<li>o	Calculate the age of each book using JavaScript.</li>
-<li>o	Persist data using browser localStorage.</li>
-<li>o	Integrate responsive design principles using Tailwind CSS or Material CSS.</li>,</ol>
+<li>	Implement features for book addition, editing, deletion, and categorization by genre.</li>
+<li>	Calculate the age of each book using JavaScript.</li>
+<li>	Persist data using browser localStorage.</li>
+<li>	Integrate responsive design principles using Tailwind CSS or Material CSS.</li>,</ul>
 •	Non-Functional Objectives:
 o	Ensure cross-browser compatibility and responsiveness.
 o	Maintain clean, scalable code with emphasis on SOLID principles.
