@@ -3,14 +3,14 @@
 <h3>1.1. Project Title</h3>
 <h3>Book Management System (BMS)</h3>
 <h3>1.2. Project Description</h3>
-The Book Management System (BMS) is a full-stack web application aimed at helping users manage personal book collections. The system will allow users to add, edit, and delete books, categorize books by genre, and calculate the age of each book based on its publication date. The project will progress from basic HTML and JavaScript functionality to incorporating advanced features like asynchronous operations, responsive design, and TypeScript conversion, following the agile development process.
-<h3>1.3. Project Objectives</h3>
-•	Functional Objectives:
-o	Build an interactive web-based system for managing books.
-o	Implement features for book addition, editing, deletion, and categorization by genre.
-o	Calculate the age of each book using JavaScript.
-o	Persist data using browser localStorage.
-o	Integrate responsive design principles using Tailwind CSS or Material CSS.
+<p>The Book Management System (BMS) is a full-stack web application aimed at helping users manage personal book collections. The system will allow users to add, edit, and delete books, categorize books by genre, and calculate the age of each book based on its publication date. The project will progress from basic HTML and JavaScript functionality to incorporating advanced features like asynchronous operations, responsive design, and TypeScript conversion, following the agile development process.</p>
+<h3>1.3. Project Objectives<</h3>>
+<ol>•	Functional Objectives:
+<li>	Build an interactive web-based system for managing books.</li>
+<li>o	Implement features for book addition, editing, deletion, and categorization by genre.</li>
+<li>o	Calculate the age of each book using JavaScript.</li>
+<li>o	Persist data using browser localStorage.</li>
+<li>o	Integrate responsive design principles using Tailwind CSS or Material CSS.</li>,</ol>
 •	Non-Functional Objectives:
 o	Ensure cross-browser compatibility and responsiveness.
 o	Maintain clean, scalable code with emphasis on SOLID principles.
@@ -97,7 +97,7 @@ Testing & Final Review	Final testing and review of the project deliverables.	30/
 •	Mentor Feedback: Regular code reviews and feedback sessions.
 •	Final Presentation: Upon project completion, present the final application and discuss future improvements.
 <h2>10. Quality Assurance</h2>
-<h3>>10.1. Testing Strategy</h3>
+<h3>10.1. Testing Strategy</h3>
 •	Unit Testing: Write tests for individual functions (e.g., book validation, age calculation).
 •	Cross-Browser Testing: Test across different browsers to ensure compatibility.
 •	Responsive Design Testing: Verify proper functioning on mobile, tablet, and desktop devices.
