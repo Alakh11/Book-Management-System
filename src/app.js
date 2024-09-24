@@ -262,6 +262,6 @@ function addBookToServer(book) {
             } else {
                 reject({ status: 'error', message: 'Failed to add book to server.' });
             }
-        }, 1000); // 1-second delay
+        }, 1000); //1-second delay
     });
 }
