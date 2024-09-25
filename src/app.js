@@ -251,17 +251,4 @@ document.addEventListener('DOMContentLoaded', () => {
     populateGenreFilter();
     renderBooks(); // Initial render on page load
 });
-// Simulate a server request to add a book
-function addBookToServer(book) {
-    return new Promise((resolve, reject) => {
-        // Simulate network delay
-        setTimeout(() => {
-            // Simulate success response 90% of the time
-            if (Math.random() < 0.9) {
-                resolve({ status: 'success', data: book });
-            } else {
-                reject({ status: 'error', message: 'Failed to add book to server.' });
-            }
-        }, 1000); //1-second delay
-    });
-}
+
