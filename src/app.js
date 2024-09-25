@@ -2,6 +2,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('addBookForm');
     const bookList = document.getElementById('book-list');
     const genreFilter = document.getElementById('genreFilter'); // New element
+    const searchForm = document.getElementById('searchBookForm');
+    const authorFilter = document.getElementById('authorFilter');
+    const ageFilter = document.getElementById('ageFilter');
+
 
     console.log('Form Element:', form);
     console.log('Book List Element:', bookList);
@@ -23,10 +27,68 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     let books = JSON.parse(localStorage.getItem('books')) || []; // Retrieve books from localStorage
-
+//Event Listener
     form.addEventListener('submit', handleFormSubmit);
     genreFilter.addEventListener('change', handleGenreFilter);
+    searchForm.addEventListener('submit', handleSearchSubmit);
+    authorFilter.addEventListener('change', handleAdvancedFilters);
+    ageFilter.addEventListener('change', handleAdvancedFilters);
 
+    // Loading Indicator Functions
+    function showLoadingIndicator(show) {
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        if (loadingIndicator) {
+            loadingIndicator.style.display = show ? 'flex' : 'none';
+        }
+    }
+
+     // Simulate a server request to add a book
+     function addBookToServer(book) {
+        return new Promise((resolve, reject) => {
+            // Simulate network delay
+            setTimeout(() => {
+                // Simulate success response 90% of the time
+                if (Math.random() < 0.9) {
+                    resolve({ status: 'success', data: book });
+                } else {
+                    reject({ status: 'error', message: 'Failed to add book to server.' });
+                }
+            }, 1000); // 1-second delay
+        });
+    }
+
+    // Fetch books from Open Library API based on a search query
+    function fetchBooksFromAPI(query) {
+        const url = `https://openlibrary.org/search.json?title=${encodeURIComponent(query)}`;
+
+        return fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.status} ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (!data.docs) {
+                    throw new Error('Invalid data format received from API.');
+                }
+                const fetchedBooks = data.docs.map(doc => ({
+                    id: Date.now() + Math.random(), // Unique ID
+                    title: doc.title || 'No Title',
+                    author: (doc.author_name && doc.author_name.join(', ')) || 'Unknown Author',
+                    isbn: (doc.isbn && doc.isbn[0]) || 'N/A',
+                    pubDate: (doc.first_publish_year && `${doc.first_publish_year}-01-01`) || 'N/A',
+                    genre: doc.subject ? doc.subject[0] : 'General',
+                }));
+                return fetchedBooks;
+            })
+            .catch(error => {
+                console.error('Fetch Error:', error);
+                throw error; // Re-throw to be handled by the caller
+            });
+    }
+
+    // Handle form submission to add a new book
     function handleFormSubmit(event) {
         event.preventDefault();
 
@@ -34,16 +96,55 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!validateFormData(bookData)) return;
 
-        addBook(bookData);
-        renderBooks();
-        populateGenreFilter();
-        form.reset();
+        showLoadingIndicator(true);
+
+        // Call the simulated server request
+        addBookToServer(bookData)
+            .then(response => {
+                books.push(response.data);
+                localStorage.setItem('books', JSON.stringify(books)); // Save to localStorage
+                renderBooks();
+                populateGenreFilter();
+                showLoadingIndicator(false);
+                alert('Book added successfully!');
+            })
+            .catch(error => {
+                console.error(error.message);
+                alert('Error: ' + error.message);
+                showLoadingIndicator(false);
+            });
+
     }
 
     function handleGenreFilter() {
         renderBooks();
     }
 
+
+    // Handle search form submission
+    function handleSearchSubmit(event) {
+        event.preventDefault();
+        const query = document.getElementById('searchQuery').value.trim();
+        if (!query) {
+            alert('Please enter a search query.');
+            return;
+        }
+
+        showLoadingIndicator(true);
+
+        fetchBooksFromAPI(query)
+            .then(fetchedBooks => {
+                integrateFetchedBooks(fetchedBooks);
+                showLoadingIndicator(false);
+            })
+            .catch(error => {
+                console.error(error);
+                alert('Error fetching books: ' + error.message);
+                showLoadingIndicator(false);
+            });
+    }
+
+    // Get form data
     function getFormData() {
         return {
             title: document.getElementById('title').value.trim(),
@@ -53,7 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
             genre: document.getElementById('genre').value.trim(),
         };
     }
-
+ // Validate form data
     function validateFormData({ title, author, isbn, pubDate, genre }) {
         if (!title || !author || !isbn || !pubDate || !genre) {
             alert('All fields must be filled!');
@@ -88,20 +189,51 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('books', JSON.stringify(books)); // Save to localStorage
     }
 
+     // Render books based on current filters
     function renderBooks() {
         bookList.innerHTML = ''; // Clear the list
 
         // Get selected genre from filter
         const selectedGenre = genreFilter.value;
+        const selectedAuthor = authorFilter.value;
+        const selectedAge = ageFilter.value;
+
 
         // Group books by genre
         const genres = {};
 
         books.forEach(book => {
+            // Apply genre filter
             if (selectedGenre !== 'All' && book.genre !== selectedGenre) {
                 return; // Skip books that don't match the selected genre
             }
 
+             // Apply author filter
+            if (selectedAuthor !== 'All' && book.author !== selectedAuthor) {
+                return; // Skip books that don't match the selected author
+            }
+
+            // Apply age filter
+            if (selectedAge !== 'All') {
+                const publicationDate = new Date(book.pubDate);
+                const currentDate = new Date();
+                let age = currentDate.getFullYear() - publicationDate.getFullYear();
+                const monthDifference = currentDate.getMonth() - publicationDate.getMonth();
+
+                // Adjust age if the current month is before the publication month
+                if (monthDifference < 0 || (monthDifference === 0 && currentDate.getDate() < publicationDate.getDate())) {
+                    age--;
+                }
+
+                 // Handle cases where age might be negative or zero
+                 age = age >= 0 ? age : 0;
+
+                 if (selectedAge === '0-5' && age > 5) return;
+                 if (selectedAge === '6-10' && (age < 6 || age > 10)) return;
+                 if (selectedAge === '11+' && age < 11) return;
+             }
+
+            // Grouping logic
             if (!genres[book.genre]) {
                 genres[book.genre] = [];
             }
@@ -137,6 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Create a book list item
     function createBookItem(book) {
         const bookItem = document.createElement('li');
 
@@ -167,6 +300,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return bookItem;
     }
 
+    // Create a button with a label and click handler
     function createButton(label, onClick) {
         const button = document.createElement('button');
         button.textContent = label;
@@ -174,7 +308,8 @@ document.addEventListener('DOMContentLoaded', () => {
         button.addEventListener('click', onClick);
         return button;
     }
-
+     
+     // Edit a book
     function editBook(id) {
         const bookToEdit = books.find(book => book.id === id);
         if (bookToEdit) {
@@ -212,6 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Delete a book
     function deleteBook(id) {
         if (confirm('Are you sure you want to delete this book?')) {
             books = books.filter(book => book.id !== id);
@@ -221,6 +357,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Populate genre filter
     function populateGenreFilter() {
         // Get unique genres
         const uniqueGenres = [...new Set(books.map(book => book.genre))];
@@ -235,8 +372,43 @@ document.addEventListener('DOMContentLoaded', () => {
             option.textContent = genre;
             genreFilter.appendChild(option);
         });
+        // Also populate author filter based on current books
+        populateAuthorFilter();
     }
 
+    // Populate author filter
+    function populateAuthorFilter() {
+        // Get unique authors
+        const uniqueAuthors = [...new Set(books.map(book => book.author))];
+
+        // Clear existing options except 'All'
+        authorFilter.innerHTML = '<option value="All">All</option>';
+
+        // Populate dropdown with unique authors
+        uniqueAuthors.forEach(author => {
+            const option = document.createElement('option');
+            option.value = author;
+            option.textContent = author;
+            authorFilter.appendChild(option);
+        });
+    }
+
+    // Integrate fetched books into the existing books array
+    function integrateFetchedBooks(fetchedBooks) {
+        fetchedBooks.forEach(book => {
+            // Check if the book already exists based on ISBN to prevent duplicates
+            if (!books.some(existingBook => existingBook.isbn === book.isbn)) {
+                books.push(book);
+            }
+        });
+        localStorage.setItem('books', JSON.stringify(books)); // Save to localStorage
+        renderBooks();
+        populateGenreFilter();
+        populateAuthorFilter();
+        alert('Fetched books added successfully!');
+    }
+
+     // Validate date format (YYYY-MM-DD)
     function isValidDate(dateString) {
         // Check if dateString is in YYYY-MM-DD format and is a valid date
         const regex = /^\d{4}-\d{2}-\d{2}$/;
@@ -249,19 +421,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initial population of genre filter and rendering
     populateGenreFilter();
+    populateAuthorFilter();
     renderBooks(); // Initial render on page load
 });
-// Simulate a server request to add a book
-function addBookToServer(book) {
-    return new Promise((resolve, reject) => {
-        // Simulate network delay
-        setTimeout(() => {
-            // Simulate success response 90% of the time
-            if (Math.random() < 0.9) {
-                resolve({ status: 'success', data: book });
-            } else {
-                reject({ status: 'error', message: 'Failed to add book to server.' });
-            }
-        }, 1000); // 1-second delay
-    });
-}

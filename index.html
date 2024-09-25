@@ -27,6 +27,12 @@
         <input type="submit" value="Add Book">
     </form>
 
+     <!-- Book Search Form -->
+     <form id="searchBookForm">
+        <input type="text" id="searchQuery" placeholder="Search books by title" required>
+        <button type="submit">Search</button>
+    </form>
+
      <!-- Genre Filter -->
      <label for="genreFilter">Filter by Genre:</label>
      <select id="genreFilter">
@@ -35,6 +41,27 @@
      </select>
 
      
+     <!-- Author Filter -->
+    <label for="authorFilter">Filter by Author:</label>
+    <select id="authorFilter">
+        <option value="All">All</option>
+        <!-- Dynamically populated authors will be inserted here -->
+    </select>
+
+    <!-- Age Filter -->
+    <label for="ageFilter">Filter by Age:</label>
+    <select id="ageFilter">
+        <option value="All">All</option>
+        <option value="0-5">0-5 years</option>
+        <option value="6-10">6-10 years</option>
+        <option value="11+">11+ years</option>
+    </select>
+
+    <!-- Loading Indicator -->
+    <div id="loadingIndicator" style="display: none;">
+        <p>Loading...</p>
+    </div>
+
     <h2>Book List</h2>
     <ul id="book-list">
         <!-- Books will be dynamically added here -->
