@@ -1,90 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link href="./dist/output.css" rel="stylesheet">
+    <link href="./src/output.css" rel="stylesheet">
+    <link href="./src/input.css" rel="stylesheet">
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book Management System</title>
 </head>
-<body class="bg-gray-50 p-6">
-    <!-- Add New Book Form -->
-    <h1 class="text-3xl font-bold mb-4 text-center">Add New Book</h1>
-    <form id="addBookForm" method="POST" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 max-w-lg mx-auto">
-        <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="title">Title:</label>
-            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline" type="text" id="title" name="title" required>
-        </div>
-        <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="author">Author:</label>
-            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline" type="text" id="author" name="author" required>
-        </div>
-        <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="isbn">ISBN:</label>
-            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline" type="number" id="isbn" name="isbn" required>
-        </div>
-        <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="pub_date">Publication Date:</label>
-            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline" type="date" id="pub_date" name="pub_date" required>
-        </div>
-        <div class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="genre">Genre:</label>
-            <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none focus:shadow-outline" type="text" id="genre" name="genre" required>
-        </div>
-        <input type="submit" value="Add Book" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded cursor-pointer">
-    </form>
 
-    <!-- Book Search Form -->
-    <form id="searchBookForm" class="max-w-lg mx-auto mb-4">
-        <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-2 focus:outline-none focus:shadow-outline" type="text" id="searchQuery" placeholder="Search books by title" required>
-        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Search</button>
-    </form>
+<body class="bg-gray-100">
+    <!-- Add New Book Section -->
+    <div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-md mt-10">
+        <h1 class="text-2xl font-bold mb-4">Add New Book</h1>
+        <form id="addBookForm" method="POST" class="space-y-4">
+            <div>
+                <label for="title" class="block text-gray-700 font-bold">Title:</label>
+                <input type="text" id="title" name="title" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
 
-    <!-- Filters -->
-    <div class="max-w-lg mx-auto mb-6">
-        <!-- Genre Filter -->
-        <label for="genreFilter" class="block text-gray-700 text-sm font-bold mb-2">Filter by Genre:</label>
-        <select id="genreFilter" class="block w-full mb-4 py-2 px-3 border rounded shadow focus:outline-none focus:shadow-outline">
-            <option value="All">All</option>
-            <!-- Dynamic options will be populated here -->
-        </select>
+            <div>
+                <label for="author" class="block text-gray-700 font-bold">Author:</label>
+                <input type="text" id="author" name="author" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
 
-        <!-- Author Filter -->
-        <label for="authorFilter" class="block text-gray-700 text-sm font-bold mb-2">Filter by Author:</label>
-        <select id="authorFilter" class="block w-full mb-4 py-2 px-3 border rounded shadow focus:outline-none focus:shadow-outline">
-            <option value="All">All</option>
-            <!-- Dynamic options will be populated here -->
-        </select>
+            <div>
+                <label for="isbn" class="block text-gray-700 font-bold">ISBN:</label>
+                <input type="number" id="isbn" name="isbn" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
 
-        <!-- Age Filter -->
-        <label for="ageFilter" class="block text-gray-700 text-sm font-bold mb-2">Filter by Age:</label>
-        <select id="ageFilter" class="block w-full mb-4 py-2 px-3 border rounded shadow focus:outline-none focus:shadow-outline">
-            <option value="All">All</option>
-            <option value="0-5">0-5 years</option>
-            <option value="6-10">6-10 years</option>
-            <option value="11+">11+ years</option>
-        </select>
+            <div>
+                <label for="pub_date" class="block text-gray-700 font-bold">Publication Date:</label>
+                <input type="date" id="pub_date" name="pub_date" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
+
+            <div>
+                <label for="genre" class="block text-gray-700 font-bold">Genre:</label>
+                <input type="text" id="genre" name="genre" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
+
+            <div>
+                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    Add Book
+                </button>
+            </div>
+        </form>
     </div>
 
-    <!-- Loading Indicator -->
-    <div id="loadingIndicator" class="loadingIndicator hidden">
-        <p class="text-gray-700 text-center text-lg">Loading...</p>
+    <!-- Book Search and Filters -->
+    <div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-md mt-6">
+        <form id="searchBookForm" class="space-y-4">
+            <div>
+                <input type="text" id="searchQuery" placeholder="Search books by title" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-2">Search</button>
+            </div>
+        </form>
+
+        <div class="mt-4">
+            <!-- Genre Filter -->
+            <label for="genreFilter" class="block text-gray-700 font-bold">Filter by Genre:</label>
+            <select id="genreFilter" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                <option value="All">All</option>
+                <!-- Dynamically populated genres will be inserted here -->
+            </select>
+        </div>
+
+        <div class="mt-4">
+            <!-- Author Filter -->
+            <label for="authorFilter" class="block text-gray-700 font-bold">Filter by Author:</label>
+            <select id="authorFilter" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                <option value="All">All</option>
+            </select>
+        </div>
+
+        <div class="mt-4">
+            <!-- Age Filter -->
+            <label for="ageFilter" class="block text-gray-700 font-bold">Filter by Age:</label>
+            <select id="ageFilter" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                <option value="All">All</option>
+                <option value="0-5">0-5 years</option>
+                <option value="6-10">6-10 years</option>
+                <option value="11+">11+ years</option>
+            </select>
+        </div>
+    </div>
+
+     <!-- Loading Indicator -->
+    <div id="loadingIndicator" class="fixed inset-0 bg-white bg-opacity-80 flex justify-center items-center z-50" style="display: none;">
+        <p class="text-xl font-bold text-gray-600">Loading...</p>
     </div>
 
     <!-- Book List -->
-    <h2 class="text-2xl font-bold text-center mb-4">Book List</h2>
-    <ul id="book-list" class="max-w-lg mx-auto">
-        <!-- Dynamic book items will be inserted here -->
-    </ul>
+    <div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-md mt-6">
+        <h2 class="text-xl font-bold mb-4">Book List</h2>
+        <ul id="book-list" class="space-y-4">
+            <!-- Dynamically populated books will be inserted here -->
+        </ul>
+    </div>
 
-    <!-- Example book item for styling -->
-    <ul class="max-w-lg mx-auto">
-        <li class="bg-gray-100 p-4 rounded-lg shadow-md flex justify-between items-center mb-4">
-            <span class="font-bold text-lg">Example Book Title</span>
-            <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Delete</button>
-        </li>
-    </ul>
-
-    <!-- JavaScript -->
     <script src="/src/app.js" defer></script>
 </body>
 </html>
