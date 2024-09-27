@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchForm = document.getElementById('searchBookForm');
     const authorFilter = document.getElementById('authorFilter');
     const ageFilter = document.getElementById('ageFilter');
+    const sortOptions = document.getElementById('sortOptions');
 
 
     console.log('Form Element:', form);
@@ -40,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
     searchForm.addEventListener('submit', handleSearchSubmit);
     authorFilter.addEventListener('change', handleAdvancedFilters);
     ageFilter.addEventListener('change', handleAdvancedFilters);
+    sortOptions.addEventListener('change', handleSort);
 
     // Loading Indicator Functions
     function showLoadingIndicator(show) {
@@ -302,8 +304,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Handle cases where age might be negative or zero
         age = age >= 0 ? age : 0;
 
+        bookItem.className = 'bg-gray-100 p-4 rounded-lg shadow-md flex justify-between items-center';
+
         bookItem.innerHTML = `
+           <div class="flex-1 cursor-pointer" onclick="showBookDetails(${book.id})">
             <strong>${book.title}</strong> by ${book.author} - ${book.genre} (${book.pubDate}) | ISBN: ${book.isbn} | Age: ${age} year(s)
+            </div>
         `;
         
         const editButton = createButton('Edit', () => editBook(book.id));
@@ -441,6 +447,41 @@ document.addEventListener('DOMContentLoaded', () => {
           timeoutId = setTimeout(() => func.apply(this, args), delay);
         };
     }
+
+    function showBookDetails(id) {
+        const book = books.find(b => b.id === id);
+        if (book) {
+          const modal = document.getElementById('bookDetailsModal');
+          const modalContent = document.getElementById('modalContent');
+          modalContent.innerHTML = `
+            <h2 class="text-xl font-bold">${book.title}</h2>
+            <p><strong>Author:</strong> ${book.author}</p>
+            <p><strong>ISBN:</strong> ${book.isbn}</p>
+            <p><strong>Publication Date:</strong> ${book.pubDate}</p>
+            <p><strong>Genre:</strong> ${book.genre}</p>
+            <!-- Add more details if needed -->
+          `;
+          modal.classList.remove('hidden');
+        }
+      }
+      
+      function closeModal() {
+        const modal = document.getElementById('bookDetailsModal');
+        modal.classList.add('hidden');
+      }
+      
+
+    function handleSort() {
+        const sortBy = sortOptions.value;
+        books.sort((a, b) => {
+          if (sortBy === 'pubDate') {
+            return new Date(a.pubDate) - new Date(b.pubDate);
+          } else {
+            return a[sortBy].localeCompare(b[sortBy]);
+          }
+        });
+        renderBooks();
+      }
 
     // Refactored addBookToServer using async/await
     async function handleFormSubmit(event) {
