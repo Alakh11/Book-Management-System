@@ -269,6 +269,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function showLoadingIndicator(show) {
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        if (loadingIndicator) {
+            loadingIndicator.style.display = show ? 'flex' : 'none';
+        }
+    }
+    
+
     // Create a book list item
     function createBookItem(book) {
         const bookItem = document.createElement('li');
@@ -418,6 +426,46 @@ document.addEventListener('DOMContentLoaded', () => {
         if (typeof timestamp !== 'number' || Number.isNaN(timestamp)) return false;
         return date.toISOString().startsWith(dateString);
     }
+    // Debounce function to limit the rate of function execution
+    function debounce(func, delay) {
+        let timeoutId;
+        return function(...args) {
+          clearTimeout(timeoutId);
+          timeoutId = setTimeout(() => func.apply(this, args), delay);
+        };
+    }
+
+    // Refactored addBookToServer using async/await
+    async function handleFormSubmit(event) {
+        event.preventDefault();
+
+    const bookData = getFormData();
+
+    if (!validateFormData(bookData)) return;
+
+    showLoadingIndicator(true);
+
+    try {
+        const response = await addBookToServer(bookData);
+        books.push(response.data);
+        localStorage.setItem('books', JSON.stringify(books)); // Save to localStorage
+        renderBooks();
+        populateGenreFilter();
+        populateAuthorFilter();
+        showLoadingIndicator(false);
+        alert('Book added successfully!');
+    } catch (error) {
+        console.error(error.message);
+        alert('Error: ' + error.message);
+        showLoadingIndicator(false);
+    }
+    }
+
+
+    // Modify the search handler to use debounce
+    const debouncedHandleSearchSubmit = debounce(handleSearchSubmit, 500); // 500ms delay
+    searchForm.addEventListener('submit', debouncedHandleSearchSubmit);
+
 
     // Initial population of genre filter and rendering
     populateGenreFilter();
