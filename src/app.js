@@ -1,4 +1,61 @@
 document.addEventListener('DOMContentLoaded', () => {
+
+        // BaseBook class
+        class BaseBook {
+            constructor(id, title, author, isbn, pubDate, genre) {
+              this.id = id;
+              this.title = title;
+              this.author = author;
+              this.isbn = isbn;
+              this.pubDate = pubDate;
+              this.genre = genre;
+            }
+        
+            // Method to calculate the age of the book
+            calculateAge() {
+              const publicationDate = new Date(this.pubDate);
+              const currentDate = new Date();
+              let age = currentDate.getFullYear() - publicationDate.getFullYear();
+              const monthDifference = currentDate.getMonth() - publicationDate.getMonth();
+              if (monthDifference < 0 || (monthDifference === 0 && currentDate.getDate() < publicationDate.getDate())) {
+                age--;
+              }
+              return age >= 0 ? age : 0;
+            }
+        
+            // Placeholder method for calculating the discount (to be overridden by subclasses)
+            calculateDiscount() {
+              return 0;
+            }
+          }
+        
+          // EBook subclass
+          class EBook extends BaseBook {
+            constructor(id, title, author, isbn, pubDate, genre, fileSize) {
+              super(id, title, author, isbn, pubDate, genre);
+              this.fileSize = fileSize;
+            }
+        
+            // EBooks have a 10% discount
+            calculateDiscount() {
+              return 0.10;
+            }
+          }
+        
+          // PrintedBook subclass
+          class PrintedBook extends BaseBook {
+            constructor(id, title, author, isbn, pubDate, genre, pageCount) {
+              super(id, title, author, isbn, pubDate, genre);
+              this.pageCount = pageCount;
+            }
+        
+            // Printed books have a 5% discount
+            calculateDiscount() {
+              return 0.05;
+            }
+          }
+
+
     class BookManager {
       constructor() {
         this.form = document.getElementById('addBookForm');
@@ -47,6 +104,18 @@ document.addEventListener('DOMContentLoaded', () => {
           alert('Error: ' + error.message);
         } finally {
           this.showLoadingIndicator(false);
+        }
+      }
+
+       // Method to create a book object based on type
+       createBook(bookData) {
+        const { id, title, author, isbn, pubDate, genre, type, pageSize, fileSize } = bookData;
+        if (type === 'ebook') {
+          return new EBook(id, title, author, isbn, pubDate, genre, fileSize);
+        } else if (type === 'printed') {
+          return new PrintedBook(id, title, author, isbn, pubDate, genre, pageSize);
+        } else {
+          throw new Error('Invalid book type');
         }
       }
   
@@ -199,15 +268,20 @@ document.addEventListener('DOMContentLoaded', () => {
   
       getFormData() {
         return {
+          id: Date.now(),
           title: document.getElementById('title').value.trim(),
           author: document.getElementById('author').value.trim(),
           isbn: document.getElementById('isbn').value.trim(),
           pubDate: document.getElementById('pub_date').value.trim(),
           genre: document.getElementById('genre').value.trim(),
+          type: document.querySelector('input[name="bookType"]:checked').value,
+          pageSize: document.getElementById('page_size')?.value.trim(),
+          fileSize: document.getElementById('file_size')?.value.trim(),
         };
       }
   
-      validateFormData({ title, author, isbn, pubDate, genre }) {
+      validateFormData(bookData) {
+        const { title, author, isbn, pubDate, genre } = bookData;
         if (!title || !author || !isbn || !pubDate || !genre) {
           alert('All fields must be filled!');
           return false;
@@ -236,6 +310,8 @@ document.addEventListener('DOMContentLoaded', () => {
   
       renderBooks() {
         this.bookList.innerHTML = ''; // Clear the list
+        const filteredBooks = this.getFilteredBooks();
+        
         const selectedGenre = this.genreFilter.value;
         const selectedAuthor = this.authorFilter.value;
         const selectedAge = this.ageFilter.value;
