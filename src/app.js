@@ -61,11 +61,20 @@ document.addEventListener('DOMContentLoaded', () => {
         this.showLoadingIndicator(true);
         this.fetchBooksFromAPI(query)
           .then(fetchedBooks => {
+            console.log('Fetched Books:', fetchedBooks);  // Debugging
+            // Merge fetched books with existing books (but keep them at the top)
+            this.books = [...fetchedBooks, ...this.books];
+            localStorage.setItem('books', JSON.stringify(this.books));
+          
+             // Reapply sorting after integrating fetched books
+            this.handleSort();
+          
+            this.renderBooks();
             this.integrateFetchedBooks(fetchedBooks);
             this.showLoadingIndicator(false);
           })
           .catch(error => {
-            console.error(error);
+            console.error('Error fetching books:',error);
             alert('Error fetching books: ' + error.message);
             this.showLoadingIndicator(false);
           });
@@ -92,6 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
       fetchBooksFromAPI(query) {
         const url = `https://openlibrary.org/search.json?title=${encodeURIComponent(query)}`;
+        console.log('Fetching books from API:', url);  // Debugging
         return fetch(url)
           .then(response => {
             if (!response.ok) throw new Error(`API Error: ${response.status}`);
@@ -113,6 +123,79 @@ document.addEventListener('DOMContentLoaded', () => {
             throw error;
           });
       }
+         
+      handleSort() {
+        const sortOption = this.sortOptions.value;
+        console.log('Sorting books by:', sortOption);  // Debugging
+  
+        if (sortOption === 'title') {
+          this.books.sort((a, b) => a.title.localeCompare(b.title));
+        } else if (sortOption === 'author') {
+          this.books.sort((a, b) => a.author.localeCompare(b.author));
+        } else if (sortOption === 'pubDate') {
+          this.books.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+        }
+  
+        this.renderBooks();
+      }
+
+      renderBooks() {
+        this.bookList.innerHTML = '';
+        let filteredBooks = this.getFilteredBooks();
+        this.handleSort(filteredBooks);
+        filteredBooks.forEach(book => {
+          const li = document.createElement('li');
+          li.textContent = `${book.title} by ${book.author} (Published: ${book.pubDate})`;
+          this.bookList.appendChild(li);
+        });
+      }
+  
+      showLoadingIndicator(show) {
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        if (loadingIndicator) {
+          loadingIndicator.style.display = show ? 'flex' : 'none';
+        }
+      }
+
+      getFilteredBooks() {
+        let filteredBooks = [...this.books];
+  
+        // Apply genre filtering
+        const selectedGenre = this.genreFilter.value;
+        if (selectedGenre) {
+          filteredBooks = filteredBooks.filter(book => book.genre === selectedGenre);
+        }
+  
+        // Apply author filtering
+        const selectedAuthor = this.authorFilter.value;
+        if (selectedAuthor) {
+          filteredBooks = filteredBooks.filter(book => book.author === selectedAuthor);
+        }
+  
+        // Add other filters if needed (e.g., age)
+        
+        return filteredBooks;
+      }
+  
+      fetchBooksFromAPI(query) {
+        const url = `https://openlibrary.org/search.json?title=${encodeURIComponent(query)}`;
+        return fetch(url)
+          .then(response => {
+            if (!response.ok) throw new Error(`API Error: ${response.status}`);
+            return response.json();
+          })
+          .then(data => {
+            return data.docs.map(doc => ({
+              id: Date.now() + Math.random(),
+              title: doc.title || 'No Title',
+              author: (doc.author_name && doc.author_name.join(', ')) || 'Unknown Author',
+              isbn: (doc.isbn && doc.isbn[0]) || 'N/A',
+              pubDate: (doc.first_publish_year && `${doc.first_publish_year}-01-01`) || 'N/A',
+              genre: doc.subject ? doc.subject[0] : 'General',
+            }));
+          });
+      }
+  
   
       getFormData() {
         return {
