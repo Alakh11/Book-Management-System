@@ -31,11 +31,14 @@ document.addEventListener('DOMContentLoaded', () => {
       async handleFormSubmit(event) {
         event.preventDefault();
         const bookData = this.getFormData();
+        console.log('Form Submitted with data:', bookData);  // Debugging
+  
         if (!this.validateFormData(bookData)) return;
   
         this.showLoadingIndicator(true);
         try {
           const response = await this.addBookToServer(bookData);
+          console.log('Book successfully added:', response);  // Debugging
           this.books.push(response.data);
           localStorage.setItem('books', JSON.stringify(this.books));
           this.renderBooks();
@@ -43,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
           this.populateAuthorFilter();
           alert('Book added successfully!');
         } catch (error) {
-          console.error(error.message);
+          console.error('Error adding book:', error);  // Debugging
           alert('Error: ' + error.message);
         } finally {
           this.showLoadingIndicator(false);
@@ -53,6 +56,8 @@ document.addEventListener('DOMContentLoaded', () => {
       handleSearchSubmit(event) {
         event.preventDefault();
         const query = document.getElementById('searchQuery').value.trim();
+        console.log('Search Query:', query);  // Debugging
+  
         if (!query) {
           alert('Please enter a search query.');
           return;
@@ -61,13 +66,39 @@ document.addEventListener('DOMContentLoaded', () => {
         this.showLoadingIndicator(true);
         this.fetchBooksFromAPI(query)
           .then(fetchedBooks => {
+            console.log('Fetched Books:', fetchedBooks);  // Debugging
             this.integrateFetchedBooks(fetchedBooks);
             this.showLoadingIndicator(false);
           })
           .catch(error => {
-            console.error(error);
+            console.error('Error fetching books:', error);  // Debugging
             alert('Error fetching books: ' + error.message);
             this.showLoadingIndicator(false);
+          });
+      }
+  
+      fetchBooksFromAPI(query) {
+        const url = `https://openlibrary.org/search.json?title=${encodeURIComponent(query)}`;
+        console.log('Fetching books from API:', url);  // Debugging
+        return fetch(url)
+          .then(response => {
+            if (!response.ok) throw new Error(`API Error: ${response.status}`);
+            return response.json();
+          })
+          .then(data => {
+            if (!data.docs) throw new Error('Invalid data format received from API.');
+            return data.docs.map(doc => ({
+              id: Date.now() + Math.random(),
+              title: doc.title || 'No Title',
+              author: (doc.author_name && doc.author_name.join(', ')) || 'Unknown Author',
+              isbn: (doc.isbn && doc.isbn[0]) || 'N/A',
+              pubDate: (doc.first_publish_year && `${doc.first_publish_year}-01-01`) || 'N/A',
+              genre: doc.subject ? doc.subject[0] : 'General',
+            }));
+          })
+          .catch(error => {
+            console.error('Fetch Error:', error);  // Debugging
+            throw error;
           });
       }
   
@@ -77,7 +108,6 @@ document.addEventListener('DOMContentLoaded', () => {
           loadingIndicator.style.display = show ? 'flex' : 'none';
         }
       }
-  
       addBookToServer(book) {
         return new Promise((resolve, reject) => {
           setTimeout(() => {
