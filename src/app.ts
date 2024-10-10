@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     isbn: string;
     pubDate: string;
     genre: string;
+    calculateAge?: () => number;
   }
 
   interface IEBook extends IBook {
@@ -167,9 +168,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     createBook(bookData: IBook): BaseBook {
       const { id, title, author, isbn, pubDate, genre } = bookData;
-      if (bookData instanceof EBook) {
+      if ('fileSize' in bookData) {
         return new EBook(id, title, author, isbn, pubDate, genre, (bookData as IEBook).fileSize);
-      } else if (bookData instanceof PrintedBook) {
+      } else if ('pageSize' in bookData) {
         return new PrintedBook(id, title, author, isbn, pubDate, genre, (bookData as IPrintedBook).pageSize);
       } else {
         throw new Error('Invalid book type');
@@ -239,7 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('All fields must be filled!');
         return false;
       }
-      if (isNaN(+isbn)) {
+      if (isNaN(Number(isbn))) {
         alert('ISBN must be a number!');
         return false;
       }
@@ -287,9 +288,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const selectedAge = this.ageFilter.value;
       if (selectedAge) {
-        filteredBooks = filteredBooks.filter((book) => book.calculateAge().toString() === selectedAge);
-      }
-
+        filteredBooks = filteredBooks.filter((book) => {
+      // Ensure that calculateAge exists before calling it
+      return book.calculateAge?.().toString() === selectedAge;
+    });
+  }
       return filteredBooks;
     }
 
