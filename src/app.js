@@ -1,3 +1,4 @@
+"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -92,6 +93,9 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     }
     return to.concat(ar || Array.prototype.slice.call(from));
 };
+Object.defineProperty(exports, "__esModule", { value: true });
+//import { BookManager } from './BookManager';
+var BookValidator_1 = require("./BookValidator");
 document.addEventListener('DOMContentLoaded', function () {
     // Decorator for logging
     function logMethod(target, propertyKey, descriptor) {
@@ -144,6 +148,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 function EBook(id, title, author, isbn, pubDate, genre, fileSize) {
                     var _this = _super.call(this, id, title, author, isbn, pubDate, genre) || this;
                     _this.fileSize = __runInitializers(_this, _instanceExtraInitializers);
+                    // Adding PhysicalBook and EBook
+                    _this.printedBook = new PrintedBook(1, 'The Great Gatsby', 'F. Scott Fitzgerald', '1234567890', '1925-04-10', 'Fiction', 200);
+                    _this.eBook = new _a(2, 'Clean Code', 'Robert C. Martin', '0987654321', '2008-08-01', 'Programming', 5);
                     _this.fileSize = fileSize;
                     return _this;
                 }
@@ -209,6 +216,9 @@ document.addEventListener('DOMContentLoaded', function () {
         return _a = /** @class */ (function () {
                 function BookManager() {
                     this.form = __runInitializers(this, _instanceExtraInitializers);
+                    // Dependency Injection: BookValidator is passed into BookManager
+                    this.validator = new BookValidator_1.BookValidator();
+                    this.manager = new _a();
                     this.form = document.getElementById('addBookForm');
                     this.bookList = document.getElementById('book-list');
                     this.genreFilter = document.getElementById('genreFilter');

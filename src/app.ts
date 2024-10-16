@@ -1,4 +1,10 @@
+//import { BookManager } from './BookManager';
+import { BookValidator } from './BookValidator';
+import { PhysicalBook } from './PhysicalBook';
+
+
 document.addEventListener('DOMContentLoaded', () => {
+
   // Interface for book data
   interface IBook {
     id: number;
@@ -73,6 +79,11 @@ document.addEventListener('DOMContentLoaded', () => {
       this.fileSize = fileSize;
     }
 
+    // Adding PhysicalBook and EBook
+    readonly printedBook = new PrintedBook(1, 'The Great Gatsby', 'F. Scott Fitzgerald', '1234567890', '1925-04-10', 'Fiction', 200);
+    readonly eBook = new EBook(2, 'Clean Code', 'Robert C. Martin', '0987654321', '2008-08-01', 'Programming', 5);
+
+
     @logMethod
     calculateDiscount(): number {
       return 0.10;
@@ -143,6 +154,11 @@ document.addEventListener('DOMContentLoaded', () => {
       this.populateAuthorFilter();
       this.renderBooks();
     }
+
+
+    // Dependency Injection: BookValidator is passed into BookManager
+    readonly validator = new BookValidator();
+    readonly manager = new BookManager();
 
     @logMethod
     async handleFormSubmit(event: Event): Promise<void> {
